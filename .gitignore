@@ -1,0 +1,16 @@
+# Root Gitignore
+node_modules/
+venv/
+env/
+__pycache__/
+*.pyc
+db.sqlite3
+.DS_Store
+.idea/
+.vscode/
+dist/
+dist-ssr/
+*.log
+
+# DO NOT IGNORE .env (User requested push)
+# .env

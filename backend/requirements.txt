@@ -1,0 +1,7 @@
+django>=6.0.3
+djangorestframework
+django-cors-headers
+django-background-tasks
+google-generativeai
+python-dotenv
+requests
