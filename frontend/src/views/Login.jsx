@@ -236,12 +236,20 @@ const Login = () => {
                       onClick={() => {
                         setOtpStep(1)
                         setError('')
+                        setSuccessMsg('')
                       }}
                       className="text-xs text-[#d61f26] font-semibold hover:underline"
                     >
                       Change
                     </button>
                   </div>
+
+                  {successMsg && (
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded flex items-center gap-2 text-emerald-800 text-xs font-semibold animate-fade-in">
+                      <CheckCircle2 className="shrink-0 text-emerald-600" size={14} />
+                      <span>{successMsg}</span>
+                    </div>
+                  )}
 
                   {/* Demo OTP Helper Box */}
                   <div className="p-3 bg-slate-50 border border-slate-200 rounded flex items-center justify-between">
