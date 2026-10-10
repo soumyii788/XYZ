@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
-import BottomNav from "./components/BottomNav";
+import Navbar from "./components/Navbar";
+import StickySideTabs from "./components/StickySideTabs";
 import SimulationModal from "./components/SimulationModal";
+import TrackingModal from "./components/TrackingModal";
 import Dashboard from "./views/Dashboard";
 import CaseDetail from "./views/CaseDetail";
 import Search from "./views/Search";
@@ -15,36 +16,58 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 gap-3">
-      <div className="w-6 h-6 border-2 border-slate-300 border-t-black rounded-full animate-spin"></div>
-      <p className="text-slate-400 font-bold uppercase tracking-widest text-[9px]">Authenticating...</p>
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 gap-3">
+      <div className="w-8 h-8 border-3 border-slate-700 border-t-[#d61f26] rounded-full animate-spin" />
+      <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+        Authenticating XYZ Session...
+      </p>
     </div>
   );
-  if (!user) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/login" replace />;
   return children;
 };
 
 const Layout = ({ children }) => {
   const { user } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSimulationOpen, setIsSimulationOpen] = useState(false);
+  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
 
-  // No layout for login/onboarding
+  // If user is not logged in, render plain children
   if (!user) return <div className="min-h-screen bg-slate-50">{children}</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row relative">
-      <Sidebar onPlusClick={() => setIsModalOpen(true)} />
+    <div className="min-h-screen bg-slate-50 flex flex-col relative text-slate-800">
+      {/* Top Enterprise Dark Navbar */}
+      <Navbar 
+        onOpenSimulation={() => setIsSimulationOpen(true)}
+        onOpenTracking={() => setIsTrackingOpen(true)}
+      />
 
-      {/* Content Area */}
-      <main className="flex-1 min-w-0 h-full">
-        <div className="max-w-7xl mx-auto p-4 md:p-8 pb-32 lg:pb-12 animate-fade-in focus:outline-none">
-          {children}
-        </div>
+      {/* Main Content Area */}
+      <main className="flex-1 w-full focus:outline-none">
+        {React.cloneElement(children, {
+          onOpenSimulation: () => setIsSimulationOpen(true),
+          onOpenTracking: () => setIsTrackingOpen(true)
+        })}
       </main>
 
-      <BottomNav onPlusClick={() => setIsModalOpen(true)} />
+      {/* Floating Sticky Side Tabs on Right Edge (Mahindra style) */}
+      <StickySideTabs 
+        onOpenTracking={() => setIsTrackingOpen(true)}
+        onOpenSimulation={() => setIsSimulationOpen(true)}
+      />
 
-      <SimulationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* Carrier Ingest Simulation Modal */}
+      <SimulationModal 
+        isOpen={isSimulationOpen} 
+        onClose={() => setIsSimulationOpen(false)} 
+      />
+
+      {/* Quick Order & Case Tracking Modal */}
+      <TrackingModal
+        isOpen={isTrackingOpen}
+        onClose={() => setIsTrackingOpen(false)}
+      />
     </div>
   );
 };
@@ -78,7 +101,7 @@ const App = () => {
           } />
 
           {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
