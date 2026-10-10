@@ -29,7 +29,7 @@ const Onboarding = () => {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post('/api/auth/onboard/', {
+      await axios.post('/api/v1/auth/onboard/', {
         username: user.username,
         company_name: companyName,
         role: role,

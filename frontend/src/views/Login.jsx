@@ -27,7 +27,7 @@ const Login = () => {
     setLoading(true)
     
     // Payload uses 'username' but we collect it as 'email' for the login logic
-    const endpoint = isLogin ? '/api/auth/login/' : '/api/auth/register/'
+    const endpoint = isLogin ? '/api/v1/auth/login/' : '/api/v1/auth/register/'
     const payload = { username: email, password, email: email }
 
     try {

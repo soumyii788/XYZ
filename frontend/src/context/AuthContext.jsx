@@ -1,18 +1,16 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('xyz_user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('xyz_user')
+      return savedUser ? JSON.parse(savedUser) : null
+    } catch {
+      return null
     }
-    setLoading(false)
-  }, [])
+  })
 
   const login = (userData) => {
     setUser(userData)
@@ -31,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, completeOnboarding, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, completeOnboarding, loading: false }}>
       {children}
     </AuthContext.Provider>
   )

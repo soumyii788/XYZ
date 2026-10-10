@@ -25,7 +25,7 @@ const Dashboard = () => {
 
   const fetchCases = async () => {
     try {
-      const res = await axios.get('/api/cases/')
+      const res = await axios.get('/api/v1/cases/')
       setCases(res.data)
     } catch (err) {
       console.error("Error fetching cases:", err)

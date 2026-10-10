@@ -14,7 +14,7 @@ const EmailIngest = () => {
     e.preventDefault()
     setLoading(true)
     try {
-      const response = await axios.post('/api/ingest/', {
+      const response = await axios.post('/api/v1/ingest/', {
         subject,
         body,
         sender,

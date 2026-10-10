@@ -21,7 +21,7 @@ const SimulationModal = ({ isOpen, onClose }) => {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post('/api/ingest/', { subject, body, sender })
+      await axios.post('/api/v1/ingest/', { subject, body, sender })
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
