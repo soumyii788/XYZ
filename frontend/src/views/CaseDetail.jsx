@@ -26,7 +26,6 @@ import {
   ChevronDown,
   X
 } from 'lucide-react'
-import Header from '../components/Header'
 import { useAuth } from '../context/AuthContext'
 
 const STATUS_CONFIG = {
@@ -204,8 +203,7 @@ const CaseDetail = () => {
   const currentPriority = PRIORITY_CONFIG[caseData.priority] || PRIORITY_CONFIG.MEDIUM
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 md:px-6 pb-32 animate-fade-in relative">
-      <Header />
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 md:px-6 py-8 pb-32 animate-fade-in relative text-slate-800">
 
       {/* Subtle Toast Feedback */}
       {toast && (
