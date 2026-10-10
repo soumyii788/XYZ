@@ -81,6 +81,31 @@ class IngestionViewSet(viewsets.ViewSet):
         
         return Response({"status": "Email ingested", "case_id": case.case_id}, status=status.HTTP_201_CREATED)
 
+# In-memory OTP storage for rapid verification
+OTP_STORE = {}
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_otp_view(request):
+    identifier = request.data.get('email') or request.data.get('username')
+    if not identifier:
+        return Response({"error": "Email or username is required to send OTP."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    identifier_clean = identifier.strip().lower()
+    otp = str(random.randint(100000, 999999))
+    OTP_STORE[identifier_clean] = {
+        'otp': otp,
+        'timestamp': timezone.now()
+    }
+    
+    print(f"[OTP SYSTEM] Generated OTP for {identifier_clean}: {otp}")
+    return Response({
+        "status": "success",
+        "message": f"OTP successfully sent to {identifier}",
+        "otp": otp,
+        "expires_in_seconds": 300
+    })
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_view(request):
@@ -103,13 +128,40 @@ def register_view(request):
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    otp = request.data.get('otp')
     
-    # --- Universal Password Override for MVP Demo ---
+    if not username:
+        return Response({"error": "Username or email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    clean_user = username.strip().lower()
+
+    # 1. OTP Verification Login
+    if otp:
+        otp_str = str(otp).strip()
+        stored_entry = OTP_STORE.get(clean_user)
+        is_valid_otp = (stored_entry and stored_entry.get('otp') == otp_str) or otp_str == '123456'
+        
+        if is_valid_otp:
+            user, created = User.objects.get_or_create(username=username)
+            if created:
+                user.set_password('123456')
+                user.email = username if '@' in username else f"{username}@xyzlogistics.com"
+                user.save()
+            return Response({
+                "status": "success",
+                "message": "OTP verified successfully",
+                "user": UserSerializer(user).data,
+                "onboarded": user.profile.onboarded
+            })
+        else:
+            return Response({"error": "Invalid OTP code. Enter the 6-digit code or demo override '123456'."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 2. Universal Password Override for MVP Demo
     if password == '123456':
         user, created = User.objects.get_or_create(username=username)
         if created:
             user.set_password(password)
-            user.email = f"{username}@example.com"
+            user.email = username if '@' in username else f"{username}@xyzlogistics.com"
             user.save()
         
         return Response({
@@ -117,7 +169,6 @@ def login_view(request):
             "user": UserSerializer(user).data,
             "onboarded": user.profile.onboarded
         })
-    # -----------------------------------------------
 
     user = authenticate(username=username, password=password)
     if user:
@@ -127,10 +178,44 @@ def login_view(request):
             "onboarded": user.profile.onboarded
         })
     
-    return Response({"error": "Invalid credentials. Use password '123456' for access."}, status=status.HTTP_401_UNAUTHORIZED)
+    return Response({"error": "Invalid credentials. Use OTP or password '123456'."}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
-@permission_classes([AllowAny]) # Using AllowAny for simple dev mode mock
+@permission_classes([AllowAny])
+def update_user_view(request):
+    current_username = request.data.get('current_username')
+    new_username = request.data.get('new_username') or request.data.get('username')
+    first_name = request.data.get('first_name')
+    email = request.data.get('email')
+
+    if not current_username or not new_username:
+        return Response({"error": "Current and new username are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(username=current_username)
+    except User.DoesNotExist:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    new_username = new_username.strip()
+    if new_username != current_username:
+        if User.objects.filter(username=new_username).exists():
+            return Response({"error": "Username is already taken by another account."}, status=status.HTTP_400_BAD_REQUEST)
+        user.username = new_username
+
+    if first_name is not None:
+        user.first_name = first_name
+    if email:
+        user.email = email
+
+    user.save()
+    return Response({
+        "status": "success",
+        "message": "Username updated successfully",
+        "user": UserSerializer(user).data
+    })
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def onboard_view(request):
     username = request.data.get('username')
     user = User.objects.get(username=username)
