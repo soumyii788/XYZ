@@ -7,7 +7,7 @@
   --color-border-subtle: #f1f5f9;
   --color-border-main: #e2e8f0;
   
-  /* Mahindra Logistics Corporate Palette */
+  /* XYZ Logistics Corporate Palette */
   --color-accent-primary: #d61f26;
   --color-accent-primary-hover: #b91c1c;
   --color-accent-dark: #111827;
@@ -152,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #64748b;
 }
 
-/* Vertical Sticky Side Tabs on Right Edge (Mahindra style) */
+/* Vertical Sticky Side Tabs on Right Edge */
 .vertical-tab-text {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
