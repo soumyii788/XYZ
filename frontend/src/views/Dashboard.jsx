@@ -623,7 +623,7 @@ const Dashboard = ({ onOpenSimulation, onOpenTracking }) => {
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-slate-800 text-[11px] text-slate-500 text-center">
-          © {new Date().getFullYear()} XYZ Logistics. Inspired by Mahindra Logistics Enterprise Architecture.
+          © {new Date().getFullYear()} XYZ LOGISTICS.
         </div>
       </footer>
 

@@ -120,7 +120,7 @@ const Analytics = () => {
           </div>
 
           <div className="p-4 bg-red-50/50 border border-red-100 rounded text-[11px] text-[#d61f26] font-medium mt-6">
-            SLA targets configured in compliance with Mahindra enterprise logistics requirements.
+            SLA targets configured in compliance with XYZ Logistics requirements.
           </div>
         </section>
 

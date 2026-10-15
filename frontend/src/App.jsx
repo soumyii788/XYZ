@@ -51,7 +51,7 @@ const Layout = ({ children }) => {
         })}
       </main>
 
-      {/* Floating Sticky Side Tabs on Right Edge (Mahindra style) */}
+      {/* Floating Sticky Side Tabs on Right Edge */}
       <StickySideTabs 
         onOpenTracking={() => setIsTrackingOpen(true)}
         onOpenSimulation={() => setIsSimulationOpen(true)}
