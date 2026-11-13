@@ -37,6 +37,9 @@ npm run dev
 
 Open the local URL printed by Vite (usually `http://localhost:5173`). Vite
 proxies `/api` requests to the Django server at `http://localhost:8000`.
+If port 8000 is already used by another app, set `XYZ_API_TARGET` to the
+backend's address when starting Vite, for example
+`XYZ_API_TARGET=http://127.0.0.1:8001 npm run dev`.
 
 To enable email analysis and summaries, set `GEMINI_API_KEY` in the backend
 process environment before starting Django. Without a valid key, those AI
